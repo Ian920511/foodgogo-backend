@@ -12,3 +12,9 @@ Desktop.ini
 node_modules
 *.log
 *.gz
+.DS_Store
+dist
+dist-ssr
+coverage
+*.local
+..env
