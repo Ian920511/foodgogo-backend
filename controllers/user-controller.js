@@ -52,6 +52,32 @@ const userController = {
       next(error)
     }
   },
+
+  register: async (req, res, next) => {
+    try {
+      const { email, password, address, tel } = req.body
+
+      await prisma.user.create({
+        data: {
+          email,
+          password: await bcrypt.hashSync(password, 10),
+          tel,
+          address,
+          cart: {
+            create: {}
+          }
+        }
+      })
+
+      res.json({
+        status: 'success',
+        message: '註冊成功' 
+      })
+
+    } catch (error) {
+      next(error)
+    }
+  },
 }
 
 module.exports = userController
