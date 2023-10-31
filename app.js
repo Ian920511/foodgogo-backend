@@ -1,11 +1,34 @@
 const express = require('express')
 const app = express()
+const cors = require('cors')
+const swaggerUi = require('swagger-ui-express')
 
-const port = 3000
+const swaggerDocument = require('./swagger.json')
 
-app.get('/', (req, res) => {
-  res.send('hello world')
-})
+const routes = require('./routes/index')
+
+const port = process.env.PORT || 3000
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+  const morgan = require('morgan')
+  app.use(morgan('dev'))
+}
+
+app.use(cors())
+app.use(express.json())
+
+app.use('/apis', routes)
+
+app.use(
+  '/api-docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    swaggerOptions: {
+      supportedSubmitMethods: []
+    }
+  })
+)
 
 app.listen(port, () => {
   console.log(`App is running on http://localhost:${port}`)
