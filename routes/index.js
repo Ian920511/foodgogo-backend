@@ -6,6 +6,7 @@ const userController = require('../controllers/user-controller')
 const categoryController = require('../controllers/category-controller')
 const carts = require('./modules/carts')
 const products = require('./modules/products')
+const orders = require('./modules/orders')
 
 router.post('/login', authValidation('login'), userController.login)
 router.post('/register', authValidation('register'), userController.register)
@@ -13,6 +14,7 @@ router.post('/register', authValidation('register'), userController.register)
 router.get('/categories', categoryController.getCategories)
 
 router.use('/carts', authValidation, carts)
+router.use('/orders', authValidation, orders)
 router.use('/products', products)
 
 router.get('/', (req, res) => {
