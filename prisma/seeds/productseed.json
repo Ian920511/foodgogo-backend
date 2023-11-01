@@ -1,0 +1,66 @@
+[
+  {
+    "name": "可樂",
+    "description": "好喝",
+    "image": "https://imgur.com/aWaA2bX",
+    "category": "飲料",
+    "price": 50,
+    "active": true
+  },
+  {
+    "name": "咖啡",
+    "description": "好喝",
+    "image": "https://imgur.com/R9HBMbn",
+    "category": "飲料",
+    "price": 100,
+    "active": true
+  },
+  {
+    "name": "牛排",
+    "description": "好吃",
+    "image": "https://imgur.com/lWeJgTQ",
+    "category": "美式",
+    "price": 500,
+    "active": true
+  },
+  {
+    "name": "漢堡",
+    "description": "好吃",
+    "image": "https://imgur.com/ujJMUxg",
+    "category": "美式",
+    "price": 300,
+    "active": true
+  },
+  {
+    "name": "糖醋雞丁",
+    "description": "好吃",
+    "image": "https://imgur.com/8JigivR",
+    "category": "中式",
+    "price": 180,
+    "active": true
+  },
+  {
+    "name": "蒸餃",
+    "description": "好吃",
+    "image": "https://imgur.com/4273VwP",
+    "category": "中式",
+    "price": 280,
+    "active": true
+  },
+  {
+    "name": "壽司",
+    "description": "好吃",
+    "image": "https://imgur.com/ZVY3A93",
+    "category": "日式",
+    "price": 200,
+    "active": true
+  },
+  {
+    "name": "天婦羅",
+    "description": "好吃",
+    "image": "https://imgur.com/6wBifme",
+    "category": "日式",
+    "price": 250,
+    "active": true
+  }
+]

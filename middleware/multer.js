@@ -1,7 +1,7 @@
 const createError = require('http-errors')
 const multer = require('multer')
 const path = require('path')
-const cloudinary = requrie('cloudinary').v2
+const cloudinary = require('cloudinary').v2
 const { CloudinaryStorage } = require('multer-storage-cloudinary')
 
 cloudinary.config({
