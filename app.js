@@ -6,6 +6,7 @@ const swaggerUi = require('swagger-ui-express')
 const swaggerDocument = require('./swagger.json')
 
 const routes = require('./routes/index')
+const errorHandler = require('./middleware/error-handler')
 
 const port = process.env.PORT || 3000
 
@@ -29,6 +30,8 @@ app.use(
     }
   })
 )
+
+app.use(errorHandler)
 
 app.listen(port, () => {
   console.log(`App is running on http://localhost:${port}`)

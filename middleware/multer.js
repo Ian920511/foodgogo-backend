@@ -20,7 +20,7 @@ const storage = new CloudinaryStorage({
 const fileFilter = (req, file, cb) => {
   let ext = path.extname(file.originalname)
 
-  if (ext !== '.jpg' && ext !== '/jpeg' && ext !== '.png') {
+  if (ext !== '.JPG' && ext !== '/JPEG' && ext !== '.PNG') {
     return cb(createError(400, '圖片檔案格式不符，請上傳 jpg / jpeg / png 檔案'))
   }
 

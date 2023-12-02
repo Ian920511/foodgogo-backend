@@ -13,7 +13,7 @@ const adminController = {
           description: true,
           image: true,
           price: true,
-          stock: true,
+          active: true,
           category: {
             select: {
               id: true,
@@ -79,12 +79,12 @@ const adminController = {
 
   updateProduct: async (req, res, next) => {
     try {
-      const productId = req.params.id
+      const productId = req.params.productId
       const { file } = req
       const { name, description, price, categoryId } = req.body
       
       const product = await prisma.product.findFirst({ where: { id: productId } })
-
+   
       if (!product) {
         throw createError(404, '該商品不存在')
       }
@@ -94,7 +94,7 @@ const adminController = {
         data: {
           name,
           description,
-          image: file.path || product.image,
+          image: file ? file.path : product.image,
           price: Number(price),
           categoryId,
         },
@@ -117,7 +117,7 @@ const adminController = {
         status: 'success',
         message: '商品更新完成',
         data: {
-          product
+          product: updateProduct
         }
       })
 
@@ -126,9 +126,29 @@ const adminController = {
     }
   },
 
+  updateProductStatus: async (req, res, next) => {
+    try {
+      const { productId } = req.params
+      const active = req.query.active !== 'false'
+
+      const updateProduct = await prisma.product.update({ where: { id: productId }, data: { active } })
+
+      res.json({
+        status: 'success',
+        message: '商品狀態更新成功',
+        data: {
+          product: updateProduct
+        }
+      })
+    } catch (error) {
+      next(error)
+    }
+  },
+
+
   deleteProduct: async (req, res, next) => {
     try {
-      const productId = req.params.id
+      const productId = req.params.productId
 
       const product = await prisma.product.findFirst({ where:{ id: productId }})
 

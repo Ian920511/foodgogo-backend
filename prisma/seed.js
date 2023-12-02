@@ -6,7 +6,7 @@ const productSeed = require('./seeds/productseed.json')
 
 async function main () {
   await prisma.$transaction(async(tx) => {
-    await tx.user.create({
+    const admin = await tx.user.create({
       data: {
         username: "admin",
         email: "admin@gmail.com",
@@ -47,6 +47,7 @@ async function main () {
       }
     })
 
+    await tx.cart.create({ data: { buyerId: admin.id } })
     await tx.cart.create({ data: { buyerId: user1.id } })
 
   })

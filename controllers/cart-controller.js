@@ -22,6 +22,7 @@ const cartController = {
                   name: true,
                   price: true,
                   active: true,
+                  image: true,
                 }
               }
             },
@@ -47,13 +48,13 @@ const cartController = {
 
   postCartItem: async (req, res, next) => {
     try {
-
-      const { productId, quantity, cartId } = req.body
+      const { cartId } = req.user
+      const { productId, quantity } = req.body
 
       const product = await prisma.product.findFirst({
         where: { id: productId },
         select: { active: true }
-      })
+      }) 
 
       let cartItem = await prisma.cartItem.findFirst({
         where: { cartId , productId },
@@ -106,7 +107,6 @@ const cartController = {
           cartItem
         }
       })
-
 
     } catch (error) {
       next(error)

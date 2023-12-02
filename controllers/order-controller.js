@@ -83,7 +83,7 @@ const orderController = {
 
   createOrder: async (req, res, next) =>{
     try {
-      const { cartId } = req.body
+      const { cartId } = req.user
       const userId = req.user.id
 
       const cartItems = await prisma.cartItem.findMany({
@@ -134,8 +134,10 @@ const orderController = {
             quantity: true,
             priceAtTime: true,
             product: {
-              id: true,
-              name: true
+              select: {
+                id: true,
+                name: true
+              }
             }
           }
         })
@@ -151,7 +153,7 @@ const orderController = {
       await prisma.cart.update({
         where: { id: cartId },
         data: {
-          cartItems: { set: []}
+          cartItem: { deleteMany: {}}
         }
       })
 

@@ -6,7 +6,7 @@ const createError = require('http-errors')
 const productController = {
   getAllProduct: async (req, res, next) => {
     try {
-      const categoryId = Number(req.query.categoryId) || ''
+      const categoryId = String(req.query.categoryId) || ''
       const keyword = String(req.query.keyword) || ''
       const max = Number(req.query.max) || ''
       const orderBy = String(req.query.orderBy) || ''
@@ -18,28 +18,39 @@ const productController = {
         priceAsc: { price: 'asc' }
       }
 
+      const whereConditions = {
+        active: true
+      }
+
+      if (keyword && keyword !== 'undefined') {
+        whereConditions.name = { contains: keyword };
+      }
+
+      if (!isNaN(max) && max !== '') {
+        whereConditions.price = { lte: Number(max) };
+      }
+
+      if (categoryId && categoryId !== 'undefined') {
+        whereConditions.categoryId = categoryId;
+      }
+      
       const filter = {
-        where: {
-          active: true,
-          ...(keyword && { name: { contains: keyword } }),
-          ...(max && { price: { lte: max } }),
-          ...(categoryId && { categoryId }),
-        },
+        where: whereConditions,
         select: {
           id: true,
           name: true,
           description: true,
           image: true,
           price: true,
-          stock: true,
+          active: true,
           category: {
             select: {
               id: true,
               name: true
             }  
+          }
         },
         orderBy: orderByType[orderBy]
-        }
       }
 
       const products = await prisma.product.findMany(filter)
@@ -58,8 +69,8 @@ const productController = {
 
   getProduct: async (req, res, next) => {
     try {
-      const productId = req.params.id
-
+      const productId = req.params.productId
+      
       const product = await prisma.product.findFirst({
         where: { id: productId },
         select: {
@@ -68,7 +79,7 @@ const productController = {
           description: true,
           image: true,
           price: true,
-          stock: true,
+          active: true,
           category: {
             select: {
               id: true,

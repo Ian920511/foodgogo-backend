@@ -12,10 +12,11 @@ const admin = require('./modules/admin')
 
 router.post('/login', authValidation('login'), userController.login)
 router.post('/register', authValidation('register'), userController.register)
+router.get('/get_current_user', authenticated, userController.getCurrentUser)
 
 router.get('/categories', categoryController.getCategories)
 
-router.use('/admin', authenticatedAdmin, admin)
+router.use('/admin', authenticated ,authenticatedAdmin, admin)
 router.use('/carts', authenticated, carts)
 router.use('/orders', authenticated, orders)
 router.use('/products', products)

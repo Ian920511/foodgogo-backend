@@ -9,7 +9,7 @@ const userController = {
     try {
       const { email, password } = req.body
 
-      const user = await prisma.user.findFirst({
+      const loginUser = await prisma.user.findFirst({
         where: { email },
         include: {
           cart: {
@@ -18,28 +18,31 @@ const userController = {
         }
       })
 
-      if (!user) {
+      if (!loginUser) {
         throw createError(404, '帳號不存在')
       }
 
-      const isMatch = await bcrypt.compare(password, user.password)
+      const isMatch = await bcrypt.compare(password, loginUser.password)
 
       if (!isMatch) {
         throw createError(400, '帳號或密碼錯誤')
       }
 
-      const payload = {
-        id: user.id,
-        email: user.email,
-        cartId: user.cart[0].id
+      const user = {
+        id: loginUser.id,
+        name: loginUser.username,
+        email: loginUser.email,
+        tel: loginUser.tel,
+        address: loginUser.address,
+        cartId: loginUser.cart[0].id,
+        isAdmin: loginUser.isAdmin
       }
 
-      const token = jwt.sign(payload, process.env.TOKEN_SECRET,{
+      const token = jwt.sign(user, process.env.TOKEN_SECRET,{
         expiresIn: '1d'
       })
 
       
-
       res.json({
         status: 'success',
         message: '登入成功',
@@ -55,11 +58,12 @@ const userController = {
 
   register: async (req, res, next) => {
     try {
-      const { email, password, address, tel } = req.body
+      const { email, password, address, tel, username } = req.body
 
       await prisma.user.create({
         data: {
           email,
+          username,
           password: await bcrypt.hashSync(password, 10),
           tel,
           address,
@@ -77,6 +81,18 @@ const userController = {
     } catch (error) {
       next(error)
     }
+  },
+
+  getCurrentUser: (req, res) => {
+    return res.json({
+      id: req.user.id,
+      name: req.user.name,
+      email: req.user.email,
+      tel: req.user.tel,
+      address: req.user.address,
+      isAdmin: req.user.isAdmin,
+      cartid: req.user.cartId
+    });
   },
 }
 

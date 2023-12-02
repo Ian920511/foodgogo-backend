@@ -3,20 +3,20 @@ const jwt = require('jsonwebtoken')
 
 const authenticated = (req, res, next) => {
   try {
-    const { Authorization } = req.headers
+    const { authorization } = req.headers
 
-    if (!Authorization) {
+    if (!authorization) {
       throw createError(401, '需登入才能使用此功能')
     }
     
-    const token =  Authorization.split(' ')[1]
+    const token =  authorization.split(' ')[1]
 
     jwt.verify(token, process.env.TOKEN_SECRET, (error, decoded) => {
       if (error) {
         throw createError(401, '登入驗證已過期或是無效，請重新登入')
       }
 
-      req.user = decoded.user
+      req.user = decoded
 
       next()
     })
