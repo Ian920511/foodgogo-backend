@@ -131,7 +131,7 @@ const cartController = {
       }
 
       if (!cartItem.product.active) {
-        throw createError(404, '商品目前未提供')
+        throw createError(400, '商品目前未提供')
       }
 
       await prisma.cartItem.update({
