@@ -58,7 +58,9 @@ const userController = {
 
   register: async (req, res, next) => {
     try {
-      const { email, password, address, tel, username } = req.body
+      const { email, password, address, tel, username, confirmPassword } = req.body
+
+      if (password !== confirmPassword) { throw createError(400, '密碼與確認密碼不相同') }
 
       await prisma.user.create({
         data: {
