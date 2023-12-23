@@ -18,9 +18,9 @@ const storage = new CloudinaryStorage({
 })
 
 const fileFilter = (req, file, cb) => {
-  let ext = path.extname(file.originalname)
+  let ext = path.extname(file.originalname).toLowerCase()
 
-  if (ext !== '.JPG' && ext !== '/JPEG' && ext !== '.PNG') {
+  if (!['.jpg', '.jepg', '.png'].includes(ext)) {
     return cb(createError(400, '圖片檔案格式不符，請上傳 jpg / jpeg / png 檔案'))
   }
 
@@ -30,7 +30,10 @@ const fileFilter = (req, file, cb) => {
 const uploadMulter = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 }
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+    files: 1
+  }
 }).single('image')
 
 module.exports = uploadMulter
