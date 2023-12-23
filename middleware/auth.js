@@ -1,7 +1,7 @@
 const createError = require('http-errors')
 const jwt = require('jsonwebtoken')
 
-const authenticated = (req, res, next) => {
+const authenticated = async (req, res, next) => {
   try {
     const { authorization } = req.headers
 
@@ -11,15 +11,15 @@ const authenticated = (req, res, next) => {
     
     const token =  authorization.split(' ')[1]
 
-    jwt.verify(token, process.env.TOKEN_SECRET, (error, decoded) => {
-      if (error) {
-        throw createError(401, '登入驗證已過期或是無效，請重新登入')
-      }
+    try {
+      const decoded = await jwt.verify(token, process.env.TOKEN_SECRET)
 
       req.user = decoded
 
       next()
-    })
+    } catch (error) {
+      throw createError(401, '登入驗證已過期或是無效，請重新登入')
+    }
 
   } catch(error) {
     next(error)
@@ -29,7 +29,7 @@ const authenticated = (req, res, next) => {
 const authenticatedAdmin = (req, res, next) => {
   const { user } = req
 
-  if (!user.isAdmin) {
+  if (!user || !user.isAdmin) {
     return next (createError(403, '無此頁面權限'))
   }
 
