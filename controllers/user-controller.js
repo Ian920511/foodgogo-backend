@@ -62,7 +62,7 @@ const userController = {
 
       if (password !== confirmPassword) { throw createError(400, '密碼與確認密碼不相同') }
 
-      await prisma.user.create({
+      const newUser = await prisma.user.create({
         data: {
           email,
           username,
@@ -77,7 +77,10 @@ const userController = {
 
       res.json({
         status: 'success',
-        message: '註冊成功' 
+        message: '註冊成功',
+        data: {
+          user: newUser
+        }
       })
 
     } catch (error) {

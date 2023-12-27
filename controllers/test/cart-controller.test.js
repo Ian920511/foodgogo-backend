@@ -6,8 +6,9 @@ const bcrypt = require('bcryptjs')
 describe('Cart Controller Tests', () => {
   let token
   let cartItemId
+ 
 
-  beforeAll(() => {
+  beforeAll(async () => {
     const user = {
         username: "user1",
         email: "user1@gmail.com",
@@ -15,9 +16,11 @@ describe('Cart Controller Tests', () => {
         address: "台北",
         tel: "09123456789",
         isAdmin: false,
+        cartId: '6cabf789-4bb3-4eae-a60e-3442b68696b4'
     }
 
-    token = jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: '1d' })
+    token = await jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: '1d' })
+ 
   })
 
   test('getCartItems should return the cart items for a user', async () => {
@@ -44,7 +47,7 @@ describe('Cart Controller Tests', () => {
     cartItemId = response.body.data.cartItem.id
   })
 
-  test('updateCartItem should update the quantity of a product in the cart', async () => {
+  test('updateCartItem should update the quantity of a product in the cart',      async () => {
     const newQuantity = 2
 
     const response = await request(app)
