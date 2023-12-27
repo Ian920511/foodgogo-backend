@@ -72,6 +72,7 @@ const adminController = {
       })
 
     } catch (error) {
+      console.log(error)
       next(error)
     }
 
@@ -148,10 +149,9 @@ const adminController = {
 
   deleteProduct: async (req, res, next) => {
     try {
-      const productId = req.params.productId
-
+      const { productId } = req.params
       const product = await prisma.product.findFirst({ where:{ id: productId }})
-
+      
       if (!product) {
         throw createError(404, '該商品不存在')
       }

@@ -33,6 +33,10 @@ app.use(
 
 app.use(errorHandler)
 
-app.listen(port, () => {
-  console.log(`App is running on http://localhost:${port}`)
-})
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(3000, () => {
+    console.log('App is running on http://localhost:3000');
+  });
+}
+
+module.exports = app
