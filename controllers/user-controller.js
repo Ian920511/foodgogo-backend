@@ -17,7 +17,7 @@ const userController = {
           }
         }
       })
-
+      
       if (!loginUser) {
         throw createError(404, '帳號不存在')
       }
@@ -75,11 +75,14 @@ const userController = {
         }
       })
 
+      const cart = await prisma.cart.findFirst({ where: { buyerId: newUser.id }})
+
       res.json({
         status: 'success',
         message: '註冊成功',
         data: {
-          user: newUser
+          user: newUser,
+          cart: cart
         }
       })
 

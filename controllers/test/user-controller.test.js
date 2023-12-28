@@ -6,13 +6,13 @@ const prisma = new PrismaClient()
 describe('User Controller Tests', () => {
   let token
   let createdUserId
+  let cartId
 
   afterAll(async () => {
     if (createdUserId) {
       try {
-        await prisma.cart.delete({ where: { buyerId: createdUserId }})
+        await prisma.cart.delete({ where: { id: cartId }})
         await prisma.user.delete({ where: { id: createdUserId }})
-        console.log('done')
       } catch (error) {
         console.log(error)
       }
@@ -20,11 +20,11 @@ describe('User Controller Tests', () => {
   })
 
   test('login should authenticate a user and return a token', async () => {
-    const userCredentials = { email: 'user1@gmail.com', password: '123456' }
+    const userCredentials = { email: 'user3@gmail.com', password: '123456' }
 
     const response = await request(app)
       .post('/apis/login')
-      .send(userCredentials);
+      .send(userCredentials)
 
     expect(response.statusCode).toBe(200)
     expect(response.body).toHaveProperty('message', '登入成功')
@@ -50,6 +50,7 @@ describe('User Controller Tests', () => {
     expect(response.body).toHaveProperty('message', '註冊成功')
     
     createdUserId = response.body.data.user.id
+    cartId = response.body.data.cart.id
   })
 
   test('getCurrentUser should return the current user details', async () => {
@@ -60,7 +61,6 @@ describe('User Controller Tests', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('email')
     expect(response.body).toHaveProperty('cartid')
-
   })
 
 })

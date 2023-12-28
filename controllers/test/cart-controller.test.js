@@ -7,16 +7,15 @@ describe('Cart Controller Tests', () => {
   let token
   let cartItemId
  
-
   beforeAll(async () => {
     const user = {
-        username: "user1",
-        email: "user1@gmail.com",
+        username: "user3",
+        email: "user3@gmail.com",
         password: bcrypt.hashSync('123456', 10),
         address: "台北",
         tel: "09123456789",
         isAdmin: false,
-        cartId: '6cabf789-4bb3-4eae-a60e-3442b68696b4'
+        cartId: 'ba79d5d7-68e9-4534-ad04-7b2db5c9f03f'
     }
 
     token = await jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: '1d' })
