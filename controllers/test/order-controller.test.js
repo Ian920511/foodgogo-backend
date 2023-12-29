@@ -8,6 +8,8 @@ const prisma = new PrismaClient()
 describe('Cart Controller Tests', () => {
   let token
   let orderId
+  let cartId
+  let productId
  
   beforeAll(async () => {
     const response = await request(app)
@@ -15,6 +17,14 @@ describe('Cart Controller Tests', () => {
       .send({ email: 'user3@gmail.com', password: '123456' })
     
     token = response.body.data.token
+    cartId = response.body.data.user.cartId
+
+    const productRes = await request(app)
+      .get(`/apis/products`)
+
+    productId = productRes.body.data.products[0].id
+
+    
   })
 
   afterAll(async () => {
@@ -39,8 +49,8 @@ describe('Cart Controller Tests', () => {
 
   test('createOrder should create a new order based on the cart contents', async () => {
     const cartItem =  {
-      cartId: 'ba79d5d7-68e9-4534-ad04-7b2db5c9f03f',
-      productId: '100be702-40e1-4d3a-a547-84e3b8566f1e',
+      cartId: cartId,
+      productId: productId,
       quantity: 1
     }
 

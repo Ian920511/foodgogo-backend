@@ -6,8 +6,9 @@ const path = require('path')
 describe('Admin Controller Tests', () => {
   let token
   let createdProductId
+  let categoryId
 
-  beforeAll(() => {
+  beforeAll(async () => {
     const admin = {
         id: 'mockedUserId',
         name: 'mockedUserName',
@@ -19,6 +20,12 @@ describe('Admin Controller Tests', () => {
     }
 
     token = jwt.sign(admin, process.env.TOKEN_SECRET, { expiresIn: '1d' })
+
+    const response = await request(app)
+      .get('/apis/categories')
+
+    categoryId = response.body.data.categories[0].id
+
   })
 
 
