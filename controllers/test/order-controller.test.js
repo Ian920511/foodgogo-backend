@@ -29,7 +29,7 @@ describe('Cart Controller Tests', () => {
 
   afterAll(async () => {
     try {
-        await prisma.orderDetail.delete({ where: { orderId }})
+        await prisma.orderDetail.deleteMany({ where: { orderId }})
         await prisma.order.delete({ where: { id: orderId }})
       } catch (error) {
         console.log(error)
