@@ -123,13 +123,18 @@ const userController = {
       })
 
       if (favorite) {
-        throw createError(404, '你已經收藏這項商品')
+        throw createError(400, '你已經收藏這項商品')
       } else {
         await prisma.favorite.create({
           userId: req.user.id,
           productId
         })
       }
+
+      res.json({
+        status: 'success',
+        message: '新增收藏成功'
+      })
 
     } catch(error) {
       next(error)
@@ -148,7 +153,7 @@ const userController = {
       })
 
       if (!favorite) {
-        throw createError(404, '你未曾收藏這項商品')
+        throw createError(400, '你未曾收藏這項商品')
       } else {
         await prisma.favorite.delete({
           where: {
@@ -157,6 +162,11 @@ const userController = {
         }
         })
       }
+
+      res.json({
+        status: 'success',
+        message: '刪除收藏成功'
+      })
 
     } catch (error) {
       next(error)

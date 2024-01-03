@@ -193,6 +193,98 @@
         }
       }
     },
+    "/apis/favorite/:productId": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "productId",
+            "description": "商品的id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "100be702-40e1-4d3a-a547-84e3b8566f1e"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "收藏特定商品",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "新增收藏成功"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "你已經收藏這項商品"
+          },
+          "404": {
+            "description": "該商品不存在"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "productId",
+            "description": "商品的id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "100be702-40e1-4d3a-a547-84e3b8566f1e"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "取消收藏特定商品",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "刪除收藏成功"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "你未曾收藏這項商品"
+          },
+          "404": {
+            "description": "該商品不存在"
+          }
+        }
+      }
+    },
     "/apis/products": {
       "get": {
         "tags": [
