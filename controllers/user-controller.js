@@ -106,9 +106,9 @@ const userController = {
   addFavorite: async (req, res, next) => {
     try {
       const { productId } = req.params
-
+      
       const product = await prisma.product.findFirst({
-        where: { productId }
+        where: { id: productId }
       })
 
       if (!product){
@@ -117,17 +117,19 @@ const userController = {
 
       const favorite = await prisma.favorite.findFirst({
         where: {
-          userId: req.user.id,
+          buyerId: req.user.id,
           productId
         }
       })
-
+      
       if (favorite) {
         throw createError(400, '你已經收藏這項商品')
       } else {
         await prisma.favorite.create({
-          userId: req.user.id,
-          productId
+          data: {
+            buyerId: req.user.id,
+            productId
+          }
         })
       }
 
@@ -147,7 +149,7 @@ const userController = {
 
       const favorite = await prisma.favorite.findFirst({
         where: {
-          userId: req.user.id,
+          buyerId: req.user.id,
           productId
         }
       })
@@ -157,9 +159,8 @@ const userController = {
       } else {
         await prisma.favorite.delete({
           where: {
-          userId: req.user.id,
-          productId
-        }
+            id: favorite.id
+          }
         })
       }
 
