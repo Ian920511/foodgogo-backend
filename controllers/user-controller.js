@@ -100,8 +100,69 @@ const userController = {
       address: req.user.address,
       isAdmin: req.user.isAdmin,
       cartid: req.user.cartId
-    });
+    })
   },
+
+  addFavorite: async (req, res, next) => {
+    try {
+      const { productId } = req.params
+
+      const product = await prisma.product.findFirst({
+        where: { productId }
+      })
+
+      if (!product){
+        throw createError(404, '商品不存在')
+      }
+
+      const favorite = await prisma.favorite.findFirst({
+        where: {
+          userId: req.user.id,
+          productId
+        }
+      })
+
+      if (favorite) {
+        throw createError(404, '你已經收藏這項商品')
+      } else {
+        await prisma.favorite.create({
+          userId: req.user.id,
+          productId
+        })
+      }
+
+    } catch(error) {
+      next(error)
+    }
+  },
+
+  removeFavorite: async (req, res, next) => {
+    try {
+      const { productId } = req.params
+
+      const favorite = await prisma.favorite.findFirst({
+        where: {
+          userId: req.user.id,
+          productId
+        }
+      })
+
+      if (!favorite) {
+        throw createError(404, '你未曾收藏這項商品')
+      } else {
+        await prisma.favorite.delete({
+          where: {
+          userId: req.user.id,
+          productId
+        }
+        })
+      }
+
+    } catch (error) {
+      next(error)
+    }
+  }
+
 }
 
 module.exports = userController
