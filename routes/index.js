@@ -14,6 +14,8 @@ const admin = require('./modules/admin')
 router.post('/login', authValidation('login'), userController.login)
 router.post('/register', authValidation('register'), userController.register)
 router.get('/get_current_user', authenticated, userController.getCurrentUser)
+
+router.get('/favorite', authenticated, userController.getFavorites)
 router.post('/favorite/:productId', authenticated, userController.addFavorite)
 router.delete('/favorite/:productId', authenticated, userController.removeFavorite)
 

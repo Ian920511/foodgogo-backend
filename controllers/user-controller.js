@@ -103,6 +103,26 @@ const userController = {
     })
   },
 
+  getFavorites: async (req, res, next) => {
+    try {
+      const userId = req.user.id
+
+      const favorites = await prisma.favorite.findMany({
+        where: { buyerId: userId }
+      })
+
+      res.json({
+        status: 'success',
+        data: {
+          favorites
+        }
+      })
+
+    } catch (error) {
+      next(error)
+    }
+  },
+
   addFavorite: async (req, res, next) => {
     try {
       const { productId } = req.params

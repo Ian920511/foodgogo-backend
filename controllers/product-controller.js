@@ -89,6 +89,24 @@ const productController = {
         }
       })
 
+      const reviews = await prisma.review.findMany({
+        where: { productId },
+        orderBy: {
+          createdAt: 'desc'
+        },
+        select: {
+          user: {
+            select: {
+              username: true
+            }
+          },
+          comment: true,
+          createdAt: true,
+          id: true
+        }
+      })
+
+
       if (!product ){
         throw createError(404, '該商品不存在')
       }
@@ -96,7 +114,8 @@ const productController = {
       res.json({
         stataus: 'success',
         data: {
-          product
+          product,
+          reviews
         }
       })
 
