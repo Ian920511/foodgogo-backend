@@ -108,7 +108,10 @@ const userController = {
       const userId = req.user.id
 
       const favorites = await prisma.favorite.findMany({
-        where: { buyerId: userId }
+        where: { buyerId: userId },
+        select: {
+          product: true
+        }
       })
 
       res.json({
@@ -135,6 +138,8 @@ const userController = {
         throw createError(404, '商品不存在')
       }
 
+      let newFavorite
+
       const favorite = await prisma.favorite.findFirst({
         where: {
           buyerId: req.user.id,
@@ -145,17 +150,26 @@ const userController = {
       if (favorite) {
         throw createError(400, '你已經收藏這項商品')
       } else {
-        await prisma.favorite.create({
+        newFavorite = await prisma.favorite.create({
           data: {
             buyerId: req.user.id,
             productId
+          },
+          select: {
+            id: true,
+            buyerId: true,
+            productId: true,
+            product: true,
           }
         })
       }
 
       res.json({
         status: 'success',
-        message: '新增收藏成功'
+        message: '新增收藏成功',
+        data: {
+          newFavorite
+        }
       })
 
     } catch(error) {

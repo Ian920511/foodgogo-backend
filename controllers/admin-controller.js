@@ -177,6 +177,7 @@ const adminController = {
       const orders = await prisma.order.findMany({
         select: {
           id: true,
+          createdAt: true,
           user: {
             select: {
               id: true,
@@ -190,11 +191,10 @@ const adminController = {
             select: {
               id: true,
               quantity: true,
+              priceAtTime: true,
               product: {
                 select: {
-                  id: true,
                   name: true,
-                  price: true
                 }
               }
             }

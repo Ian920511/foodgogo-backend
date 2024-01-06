@@ -6,9 +6,10 @@ const prisma = new PrismaClient()
 const reviewController = {
   postReview: async (req, res, next) => {
     try {
-      const { productId, comment, rating } = req.body
+      const { productId, comment } = req.body
       const userId = req.user.id
-
+      const rating = Number(req.body.rating)
+      
       if (typeof rating !== 'number' || rating < 1 || rating > 5) {
         throw createError(400, '評分需在1到5之間，且為數字');
       }
@@ -51,28 +52,36 @@ const reviewController = {
   },
 
   deleteReview: async (req, res, next) => {
-    const { reviewId }  = req.params
+    try {
+      const { reviewId }  = req.params
 
-    const review = await prisma.review.findFirst({
-      where: {
-        id: reviewId
-      }
-    })
-
-    if (!review) {
-      throw createError(404, '此評論不存在')
-    } else {
-      await prisma.review.delete({
+      const review = await prisma.review.findFirst({
         where: {
           id: reviewId
         }
       })
-    }
 
-    res.json({
-      status: 'success',
-      message: '刪除評論成功'
-    })
+      if (!review) {
+        throw createError(404, '此評論不存在')
+      } else {
+        await prisma.review.delete({
+          where: {
+            id: reviewId
+          }
+        })
+      }
+
+      res.json({
+        status: 'success',
+        message: '刪除評論成功',
+        data: {
+          review
+        }
+      })
+
+    } catch (error) {
+      next(error)
+    }
   }
 
 

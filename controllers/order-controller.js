@@ -13,6 +13,7 @@ const orderController = {
         select: {
           id: true,
           totalPrice: true,
+          createdAt: true,
           orderDetail: {
             select: {
               id: true,
@@ -42,7 +43,7 @@ const orderController = {
 
   getOrder: async (req, res, next) => {
     try {
-      const orderId = req.params.id
+      const orderId = req.params.orderId
 
       const order = await prisma.order.findFirst({
         where: { id: orderId },
@@ -74,7 +75,6 @@ const orderController = {
           order
         }
       })
-
 
     } catch (error) {
       next(error)
