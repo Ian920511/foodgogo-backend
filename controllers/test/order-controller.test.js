@@ -23,7 +23,6 @@ describe('Cart Controller Tests', () => {
       .get(`/apis/products`)
 
     productId = productRes.body.data.products[0].id
-
     
   })
 

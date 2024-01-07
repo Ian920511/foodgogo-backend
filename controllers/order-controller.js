@@ -85,7 +85,7 @@ const orderController = {
     try {
       const { cartId } = req.user
       const userId = req.user.id
-      console.log('user',req.user)
+      
       const cartItems = await prisma.cartItem.findMany({
         where: { cartId },
         select: {

@@ -7,6 +7,17 @@ describe('User Controller Tests', () => {
   let token
   let createdUserId
   let cartId
+  let productId
+
+  beforeAll(async () => {
+    const productRes = await request(app)
+      .get(`/apis/products`)
+
+    productId = productRes.body.data.products[0].id
+    
+  })
+
+
 
   afterAll(async () => {
     if (createdUserId) {
@@ -61,6 +72,37 @@ describe('User Controller Tests', () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty('email')
     expect(response.body).toHaveProperty('cartid')
+  })
+
+  test('getFavorites should return the list of favorite products', async () => {
+    const response = await request(app)
+      .get('/apis/favorite')
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body).toHaveProperty('status', 'success')
+    expect(Array.isArray(response.body.data.favorites)).toBe(true)
+  })
+
+  test('addFavorite should add a product to favorites', async () => {
+    const response = await request(app)
+      .post(`/apis/favorite/${productId}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body).toHaveProperty('status', 'success')
+    expect(response.body.data).toHaveProperty('newFavorite')
+
+    })
+
+  test('removeFavorite should remove a product from favorites', async () => {
+    const response = await request(app)
+      .delete(`/apis/favorite/${productId}`)
+      .set('Authorization', `Bearer ${token}`)
+
+    expect(response.statusCode).toBe(200)
+    expect(response.body).toHaveProperty('status', 'success')
+    expect(response.body).toHaveProperty('message', '刪除收藏成功')
   })
 
 })
