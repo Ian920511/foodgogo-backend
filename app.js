@@ -31,6 +31,10 @@ app.use(
   })
 )
 
+app.all('/*', (req, res, next) => {
+  next(createError(404, '無效路由'))
+})
+
 app.use(errorHandler)
 
 if (process.env.NODE_ENV !== 'test') {
