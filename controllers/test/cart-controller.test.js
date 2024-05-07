@@ -9,17 +9,11 @@ describe('Cart Controller Tests', () => {
   let productId
  
   beforeAll(async () => {
-    const user = {
-        username: "user3",
-        email: "user3@gmail.com",
-        password: bcrypt.hashSync('123456', 10),
-        address: "台北",
-        tel: "09123456789",
-        isAdmin: false,
-        cartId: 'ba79d5d7-68e9-4534-ad04-7b2db5c9f03f'
-    }
-
-    token = await jwt.sign(user, process.env.TOKEN_SECRET, { expiresIn: '1d' })
+    const response = await request(app)
+      .post('/apis/login')
+      .send({ email: 'user1@gmail.com', password: '123456' })
+    
+    token = response.body.data.token
 
     const productRes = await request(app)
       .get(`/apis/products`)
@@ -50,6 +44,7 @@ describe('Cart Controller Tests', () => {
     expect(response.statusCode).toBe(200)
     expect(response.body).toHaveProperty('message', '新增購物車商品成功')
     cartItemId = response.body.data.cartItem.id
+
   })
 
   test('updateCartItem should update the quantity of a product in the cart',      async () => {

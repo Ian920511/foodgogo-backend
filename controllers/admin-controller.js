@@ -178,6 +178,7 @@ const adminController = {
         select: {
           id: true,
           createdAt: true,
+          totalPrice: true,
           user: {
             select: {
               id: true,

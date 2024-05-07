@@ -14,7 +14,7 @@ describe('Cart Controller Tests', () => {
   beforeAll(async () => {
     const response = await request(app)
       .post('/apis/login')
-      .send({ email: 'user3@gmail.com', password: '123456' })
+      .send({ email: 'user1@gmail.com', password: '123456' })
     
     token = response.body.data.token
     cartId = response.body.data.user.cartId

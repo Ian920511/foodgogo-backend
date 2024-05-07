@@ -9,23 +9,17 @@ describe('Admin Controller Tests', () => {
   let categoryId
 
   beforeAll(async () => {
-    const admin = {
-        id: 'mockedUserId',
-        name: 'mockedUserName',
-        email: 'mockedUserEmail',
-        tel: 'mockedUserTel',
-        address: 'mockedUserAddress',
-        cartId: 'mockedUserCartId',
-        isAdmin: true
-    }
-
-    token = jwt.sign(admin, process.env.TOKEN_SECRET, { expiresIn: '1d' })
-
+    const userResponse = await request(app)
+      .post('/apis/login')
+      .send({ email: 'admin@gmail.com', password: '123456' })
+    
+    token = userResponse.body.data.token
+    
     const response = await request(app)
       .get('/apis/categories')
 
     categoryId = response.body.data.categories[0].id
-
+    
   })
 
 
@@ -49,7 +43,7 @@ describe('Admin Controller Tests', () => {
       .field('name', 'Mock Product')
       .field('description', 'Mock Description')
       .field('price', 100)
-      .field('categoryId', '61181a7d-bf5a-4114-8a35-d7688cf187a2')
+      .field('categoryId', categoryId)
       .attach('image', mockFilePath)
 
     expect(response.statusCode).toBe(200);
@@ -63,7 +57,7 @@ describe('Admin Controller Tests', () => {
       name: 'Updated Name',
       description: 'Updated Description',
       price: 200,
-      categoryId: '61181a7d-bf5a-4114-8a35-d7688cf187a2' 
+      categoryId 
     }
 
     const response = await request(app)

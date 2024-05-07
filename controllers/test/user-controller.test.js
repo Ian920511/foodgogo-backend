@@ -31,7 +31,7 @@ describe('User Controller Tests', () => {
   })
 
   test('login should authenticate a user and return a token', async () => {
-    const userCredentials = { email: 'user3@gmail.com', password: '123456' }
+    const userCredentials = { email: 'user1@gmail.com', password: '123456' }
 
     const response = await request(app)
       .post('/apis/login')
