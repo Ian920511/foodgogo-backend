@@ -1,37 +1,16 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-
 const createError = require('http-errors')
+
+const cartServices = require('./../services/cart-services')
+const productServices = require('./../services/product-services')
 
 const cartController = {
   getCartItems : async (req, res, next) => {
     try {
       const buyerId = req.user.id
 
-      const cart = await prisma.cart.findFirst({
-        where: { buyerId },
-        select: {
-          id: true,
-          cartItem: {
-            select: {
-              id: true,
-              quantity: true,
-              product: {
-                select: {
-                  id: true,
-                  name: true,
-                  price: true,
-                  active: true,
-                  image: true,
-                }
-              }
-            },
-            orderBy: {
-              createdAt: 'desc'
-            }
-          }
-        }
-      })
+      const cart = await cartServices.getCartByUserId(buyerId)
 
       res.json({
         status: 'success',
@@ -51,53 +30,18 @@ const cartController = {
       const { cartId } = req.user
       const { productId, quantity } = req.body
 
-      const product = await prisma.product.findFirst({
-        where: { id: productId },
-        select: { active: true }
-      }) 
+      const product = await productServices.getProductById(productId)
 
-      let cartItem = await prisma.cartItem.findFirst({
-        where: { cartId , productId },
-        select: { id: true, quantity: true }
-      })
+      let cartItem = await cartServices.getCartItem(cartId, productId)
 
       if (!product.active) {
         return createError(400, '商品目前未提供')
       }
 
       if (cartItem) {
-        cartItem = await prisma.cartItem.update({
-          where: { id: cartItem.id },
-          data: { quantity: { increment: quantity }},
-          select: {
-            id: true,
-            quantity: true,
-            product: {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                active: true
-              }
-            }
-          }
-        })
+        cartItem = await cartServices.updateCartItem(cartItem.id, quantity)
       } else {
-        cartItem = await prisma.cartItem.create({
-          data: { cartId, productId, quantity },
-          select: {
-            id: true,
-            quantity: true,
-            product: {
-              select: {
-                id: true,
-                name: true,
-                price: true,
-                active: true
-              }
-            }
-          }
-        })
+        cartItem = await cartServices.createCartItem(cartId, productId, quantity)
       }
 
       res.json({
@@ -118,27 +62,19 @@ const cartController = {
       const { quantity } = req.body
       const { cartItemId } = req.params
 
-      const cartItem = await prisma.cartItem.findFirst({
-        where: { id: cartItemId },
-        select: {
-          id: true,
-          product: { select: { id: true, active: true }}
-        }
-      })
+      const cartItem = await cartServices.getCartItemById(cartItemId)
 
       if (!cartItem) {
         throw createError(404, '該購物車商品不存在')
       }
 
-      if (!cartItem.product.active) {
+      const product = await productServices.getProductById(cartItem.productId)
+
+      if (!product.active) {
         throw createError(400, '商品目前未提供')
       }
 
-      await prisma.cartItem.update({
-        where: { id: cartItemId },
-        data: { quantity: Number(quantity) },
-        select: { quantity: true }
-      })
+      await cartServices.updateCartItem(cartItemId, quantity)
 
       res.json({
         status: 'success',
@@ -154,16 +90,13 @@ const cartController = {
     try {
       const { cartItemId } = req.params
 
-      const cartItem = await prisma.cartItem.findFirst({
-        where: { id: cartItemId },
-        select: { id: true, productId: true, quantity: true }
-      })
+      const cartItem = await cartServices.getCartItemById(cartItemId)
 
       if (!cartItem) {
         throw createError(404, '該購物車商品不存在')
       }
 
-      await prisma.cartItem.delete({ where: { id: cartItemId }})
+      await cartServices.deleteCartItem(cartItemId)
 
       res.json({
         status: 'success',

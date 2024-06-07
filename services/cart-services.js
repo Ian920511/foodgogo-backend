@@ -67,6 +67,13 @@ const cartServices = {
     return cartItems
   },
 
+  getCartItemById: async (cartItemId) => {
+    return await prisma.cartItem.findFirst({
+      where: { id: cartItemId },
+      select: { id: true, productId: true, quantity: true }
+    })
+  },
+
   createCartItem: async (cartId, productId, quantity) => {
     const cartItem = await prisma.cartItem.create({
       data: { cartId, productId, quantity },
