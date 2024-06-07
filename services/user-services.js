@@ -32,3 +32,5 @@ const userServices = {
     return user
   }
 }
+
+module.exports = userServices
