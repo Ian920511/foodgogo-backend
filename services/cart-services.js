@@ -2,7 +2,13 @@ const { PrismaClient } = require('@prisma/client')
 const { updateCartItem, deleteCartItem } = require('../controllers/cart-controller')
 const prisma = new PrismaClient()
 
-const cartService = {
+const cartServices = {
+  getCartByUserId: async (userId) => {
+    const cart =  await prisma.cart.findFirst({ where: { buyerId: userId }})
+
+    return cart
+  },
+
   getCartItems: async (buyerId) => {
     const cart = await prisma.cart.findFirst({
       where: { buyerId },
