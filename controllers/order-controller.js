@@ -1,33 +1,16 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-
 const createError = require('http-errors')
+
+const orderServices = require('./../services/order-services')
+const cartServices = require('./../services/cart-services')
 
 const orderController = {
   getOrders : async (req, res, next) => {
     try {
       const userId = req.user.id
 
-      const orders = await prisma.order.findMany({
-        where: { buyerId: userId },
-        select: {
-          id: true,
-          totalPrice: true,
-          createdAt: true,
-          orderDetail: {
-            select: {
-              id: true,
-              priceAtTime: true,
-              quantity: true,
-              product: {
-                select: {
-                  name: true,
-                }
-              }
-            }
-          }
-        }
-      })
+      const orders = await orderServices.getOrdersByUserId(userId)
 
       res.json({
         status: 'success',
@@ -45,25 +28,7 @@ const orderController = {
     try {
       const orderId = req.params.orderId
 
-      const order = await prisma.order.findFirst({
-        where: { id: orderId },
-        select: {
-          id: true,
-          totalPrice: true,
-          orderDetail: {
-            select: {
-              id: true,
-              priceAtTime: true,
-              quantity: true,
-              product: {
-                select: {
-                  name: true,
-                }
-              }
-            }
-          }
-        }
-      })
+      const order = await orderServices.getOrderById(orderId)
 
       if (!order) {
         throw createError(404, '該訂單不存在')
@@ -86,28 +51,12 @@ const orderController = {
       const { cartId } = req.user
       const userId = req.user.id
       
-      const cartItems = await prisma.cartItem.findMany({
-        where: { cartId },
-        select: {
-          id: true,
-          quantity: true,
-          product: {
-            select: {
-              id: true,
-              name: true,
-              price: true,
-              active: true
-            }
-          }
-        }
-      })
+      const cartItems = await cartServices.getCartItemsByCartId(cartId)
 
       let totalPrice = 0
       const orderDetails = []
 
-      const order = await prisma.order.create({
-        data: { buyerId: userId, totalPrice}
-      })
+      const order = await orderServices.createOrder(userId, totalPrice)
 
       for (const cartItem of cartItems) {
         const product = cartItem.product
@@ -122,40 +71,13 @@ const orderController = {
 
         totalPrice += product.price * cartItem.quantity
 
-        const orderDetail = await prisma.orderDetail.create({
-          data: { 
-            quantity: cartItem.quantity,
-            orderId: order.id,
-            priceAtTime: product.price,
-            productId: product.id
-          },
-          select: {
-            id: true,
-            quantity: true,
-            priceAtTime: true,
-            product: {
-              select: {
-                id: true,
-                name: true
-              }
-            }
-          }
-        })
+        const orderDetail = await orderServices.createOrderDetail(order.id, cartItem)
 
         orderDetails.push(orderDetail)
       }
 
-      await prisma.order.update({
-          where: { id: order.id },
-          data: { totalPrice }
-        })
-
-      await prisma.cart.update({
-        where: { id: cartId },
-        data: {
-          cartItem: { deleteMany: {}}
-        }
-      })
+      await orderServices.updateOrderTotalPrice(order.id, totalPrice)
+      await cartServices.clearCartItems(cartId)
 
       res.json({
         status: 'success',
