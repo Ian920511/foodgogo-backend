@@ -47,6 +47,26 @@ const cartServices = {
     return cartItem
   },
 
+  getCartItemsByCartId: async (cartId) => {
+    const cartItems =  await prisma.cartItem.findMany({
+      where: { cartId },
+      select: {
+        id: true,
+        quantity: true,
+        product: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            active: true
+          }
+        }
+      }
+    })
+
+    return cartItems
+  },
+
   createCartItem: async (cartId, productId, quantity) => {
     const cartItem = await prisma.cartItem.create({
       data: { cartId, productId, quantity },
@@ -90,6 +110,15 @@ const cartServices = {
 
   deleteCartItem: async (cartItemId) => {
     return await prisma.cartItem.delete({ where: { id: cartItemId }})
+  },
+
+  clearCartItems: async (cartId) => {
+    return await prisma.cart.update({
+      where: { id: cartId },
+      data: {
+        cartItem: { deleteMany: {} }
+      }
+    })
   }
 
 }
