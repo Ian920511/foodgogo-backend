@@ -29,13 +29,12 @@ const reviewServices = {
     return review
   },
 
-  createReview: async (productId, userId, comment, rating) => {
+  createReview: async (productId, userId, comment ) => {
     const review = await prisma.review.create({
       data: {
         productId,
         buyerId: userId,
         comment,
-        rating
       }
     })
 

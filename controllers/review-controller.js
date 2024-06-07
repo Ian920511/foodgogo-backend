@@ -1,25 +1,23 @@
-const bcrypt = require('bcryptjs')
 const createError = require('http-errors')
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
+
+const reviewServices = require('./../services/review-services')
+const userServices = require('./../services/user-services')
+const productServices = require('./../services/product-services')
 
 const reviewController = {
   postReview: async (req, res, next) => {
     try {
       const { productId, comment } = req.body
-      const userId = req.user.id
-      const rating = Number(req.body.rating)
+      const userId = req.user.id   
       
-      if (typeof rating !== 'number' || rating < 1 || rating > 5) {
-        throw createError(400, '評分需在1到5之間，且為數字');
-      }
-
       if (!comment) {
         throw createError(400, '必須填寫評論')
       }
 
-      const user = await prisma.user.findFirst({ where: { id: userId }})
-      const product = await prisma.product.findFirst({ where: { id: productId }})
+      const user = await userServices.getUserById(userId)
+      const product = await productServices.getProductById(productId)
 
       if (!user) {
         throw createError(404, '使用者不存在')
@@ -29,14 +27,7 @@ const reviewController = {
         throw createError(404, '商品不存在')
       }
 
-      const review = await prisma.review.create({
-        data: {
-          productId,
-          buyerId: userId,
-          comment,
-          rating
-        }
-      })
+      const review = await reviewServices.createReview(productId, userId, comment)
 
       res.json({
         status: 'success',
@@ -55,21 +46,13 @@ const reviewController = {
     try {
       const { reviewId }  = req.params
 
-      const review = await prisma.review.findFirst({
-        where: {
-          id: reviewId
-        }
-      })
+      const review = await reviewServices.getReviewById(reviewId)
 
       if (!review) {
         throw createError(404, '此評論不存在')
-      } else {
-        await prisma.review.delete({
-          where: {
-            id: reviewId
-          }
-        })
       }
+
+      await reviewServices.deleteReviewById(reviewId)
 
       res.json({
         status: 'success',
