@@ -15,6 +15,12 @@ const userServices = {
     return user
   },
 
+  getUserById: async (userId) => {
+    const user = await prisma.user.findFirst({ where: { id: userId } })
+
+    return user
+  },
+
   createUser: async (email, username, password, tel, address) => {
     const user = await prisma.user.create({
       data: {
