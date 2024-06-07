@@ -4,19 +4,17 @@ const jwt = require('jsonwebtoken')
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
 
+const userServices = require('./../services/user-services')
+const cartServices = require('./../services/cart-services')
+const favoriteServices = require('./../services/favorite-services')
+const productServices = require('./../services/product-services')
+
 const userController = {
   login: async (req, res, next) => {
     try {
       const { email, password } = req.body
 
-      const loginUser = await prisma.user.findFirst({
-        where: { email },
-        include: {
-          cart: {
-            select: { id: true}
-          }
-        }
-      })
+      const loginUser = await userServices.getUserByEmail(email)
       
       if (!loginUser) {
         throw createError(404, '帳號不存在')
@@ -62,20 +60,9 @@ const userController = {
 
       if (password !== confirmPassword) { throw createError(400, '密碼與確認密碼不相同') }
 
-      const newUser = await prisma.user.create({
-        data: {
-          email,
-          username,
-          password: await bcrypt.hashSync(password, 10),
-          tel,
-          address,
-          cart: {
-            create: {}
-          }
-        }
-      })
+      const newUser = await userServices.createUser(email, username, password, tel, address)
 
-      const cart = await prisma.cart.findFirst({ where: { buyerId: newUser.id }})
+      const cart = await cartServices.getCartByUserId(newUser.id)
 
       res.json({
         status: 'success',
@@ -107,12 +94,7 @@ const userController = {
     try {
       const userId = req.user.id
 
-      const favorites = await prisma.favorite.findMany({
-        where: { buyerId: userId },
-        select: {
-          product: true
-        }
-      })
+      const favorites = await favoriteServices.getFavoritesByUserId(userId)
 
       res.json({
         status: 'success',
@@ -130,39 +112,20 @@ const userController = {
     try {
       const { productId } = req.params
       
-      const product = await prisma.product.findFirst({
-        where: { id: productId }
-      })
+      const product = await productServices.getProductById(productId)
 
       if (!product){
         throw createError(404, '商品不存在')
       }
 
-      let newFavorite
 
-      const favorite = await prisma.favorite.findFirst({
-        where: {
-          buyerId: req.user.id,
-          productId
-        }
-      })
+      const favorite = await favoriteServices.getFavoriteByUserIdAndProductId(req.user.id, productId)
       
       if (favorite) {
         throw createError(400, '你已經收藏這項商品')
-      } else {
-        newFavorite = await prisma.favorite.create({
-          data: {
-            buyerId: req.user.id,
-            productId
-          },
-          select: {
-            id: true,
-            buyerId: true,
-            productId: true,
-            product: true,
-          }
-        })
-      }
+      } 
+
+      const newFavorite = await favoriteServices.createFavorite(req.user.id, productId)
 
       res.json({
         status: 'success',
@@ -181,22 +144,13 @@ const userController = {
     try {
       const { productId } = req.params
 
-      const favorite = await prisma.favorite.findFirst({
-        where: {
-          buyerId: req.user.id,
-          productId
-        }
-      })
+      const favorite = await favoriteServices.getFavoriteByUserIdAndProductId(req.user.id, productId)
 
       if (!favorite) {
         throw createError(400, '你未曾收藏這項商品')
-      } else {
-        await prisma.favorite.delete({
-          where: {
-            id: favorite.id
-          }
-        })
       }
+
+      await favoriteServices.deleteFavoriteById(favorite.id)
 
       res.json({
         status: 'success',
