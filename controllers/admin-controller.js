@@ -1,27 +1,14 @@
 const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient()
-
 const createError = require('http-errors')
+
+const productServices = require('./../services/product-services')
+const orderServices = require('./../services/order-services')
 
 const adminController = {
   getProducts: async (req, res, next) => {
     try {
-    const products = await prisma.product.findMany({
-      select: {
-        id: true,
-          name: true,
-          description: true,
-          image: true,
-          price: true,
-          active: true,
-          category: {
-            select: {
-              id: true,
-              name: true
-            }  
-        },
-      }
-    })
+    const products = await productServices.getAllProducts()
 
     res.json({
       status: 'success',
@@ -40,28 +27,7 @@ const adminController = {
       const { name, description, price, categoryId } = req.body
       const { file } = req
 
-      const product = await prisma.product.create({
-        data: {
-          name,
-          description,
-          image: file.path,
-          price: Number(price),
-          categoryId
-        },
-        select: {
-          id: true,
-          name: true,
-          description: true,
-          image: true,
-          price: true,
-          category: {
-            select: {
-              id: true,
-              name: true
-            }
-          }
-        }
-      })
+      const product = await productServices.createProduct(name, description, file.path, price, categoryId)
 
       res.json({
         status: 'success',
@@ -84,35 +50,13 @@ const adminController = {
       const { file } = req
       const { name, description, price, categoryId } = req.body
       
-      const product = await prisma.product.findFirst({ where: { id: productId } })
+      const product = await productServices.getProductById(productId)
    
       if (!product) {
         throw createError(404, '該商品不存在')
       }
 
-      const updateProduct = await prisma.product.update({
-        where: { id: productId },
-        data: {
-          name,
-          description,
-          image: file ? file.path : product.image,
-          price: Number(price),
-          categoryId,
-        },
-        select: {
-          id: true,
-          name: true,
-          description: true,
-          image: true,
-          price: true,
-          category: {
-            select: {
-              id: true,
-              name: true
-            }
-          }
-        }
-      })
+      const updateProduct = await productServices.updateProduct(productId, name, description, file ? file.path : product.image, price, categoryId)
 
       res.json({
         status: 'success',
@@ -132,7 +76,7 @@ const adminController = {
       const { productId } = req.params
       const active = req.query.active !== 'false'
 
-      const updateProduct = await prisma.product.update({ where: { id: productId }, data: { active } })
+      const updateProduct = await productServices.updateProductStatus(productId, active)
 
       res.json({
         status: 'success',
@@ -160,7 +104,7 @@ const adminController = {
         throw createError(400, '商品需下架後，才能進行刪除')
       }
 
-      await prisma.product.delete({ where: { id: productId }})
+      await deleteProductById(productId)
 
       res.json({
         status: 'success',
@@ -174,34 +118,7 @@ const adminController = {
 
   getOrders: async (req, res, next) => {
     try {
-      const orders = await prisma.order.findMany({
-        select: {
-          id: true,
-          createdAt: true,
-          totalPrice: true,
-          user: {
-            select: {
-              id: true,
-              username: true,
-              email: true,
-              address: true,
-              tel: true,
-            }
-          },
-          orderDetail: {
-            select: {
-              id: true,
-              quantity: true,
-              priceAtTime: true,
-              product: {
-                select: {
-                  name: true,
-                }
-              }
-            }
-          }
-        }
-      })
+      const orders = await orderServices.getOrderByAdmin()
 
       res.json({
         status: 'success',
