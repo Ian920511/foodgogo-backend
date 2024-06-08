@@ -1,10 +1,32 @@
 const { PrismaClient } = require('@prisma/client')
-const { updateCartItem, deleteCartItem } = require('../controllers/cart-controller')
 const prisma = new PrismaClient()
 
 const cartServices = {
   getCartByUserId: async (userId) => {
-    const cart =  await prisma.cart.findFirst({ where: { buyerId: userId }})
+    const cart = await prisma.cart.findFirst({
+        where: { buyerId: userId },
+        select: {
+          id: true,
+          cartItem: {
+            select: {
+              id: true,
+              quantity: true,
+              product: {
+                select: {
+                  id: true,
+                  name: true,
+                  price: true,
+                  active: true,
+                  image: true,
+                }
+              }
+            },
+            orderBy: {
+              createdAt: 'desc'
+            }
+          }
+        }
+      })
 
     return cart
   },
@@ -94,10 +116,12 @@ const cartServices = {
     return cartItem
   },
 
-  updateCartItem: async (cartItemId, quantity) => {
+  updateCartItem: async (cartItemId, quantity, isIncrement = false) => {
+    const data = isIncrement ? { quantity: { increment: Number(quantity) } } : { quantity: Number(quantity) }
+
     const cartItem = await prisma.cartItem.update({
       where: { id: cartItemId },
-      data: { quantity: { increment: quantity } },
+      data,
       select: {
         id: true,
         quantity: true,

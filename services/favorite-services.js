@@ -21,11 +21,12 @@ const favoriteServices = {
     return favorite
   },
 
-  createFavorite: async (userId, productId) => {
+  createFavorite: async (productId, userId, comment) => {
     const favorite = await prisma.favorite.create({
       data: {
         buyerId: userId,
-        productId
+        productId,
+        comment
       },
       select: {
         id: true,

@@ -9,7 +9,7 @@ const cartController = {
   getCartItems : async (req, res, next) => {
     try {
       const buyerId = req.user.id
-
+      console.log(buyerId)
       const cart = await cartServices.getCartByUserId(buyerId)
 
       res.json({
@@ -39,7 +39,7 @@ const cartController = {
       }
 
       if (cartItem) {
-        cartItem = await cartServices.updateCartItem(cartItem.id, quantity)
+        cartItem = await cartServices.updateCartItem(cartItem.id, quantity, true)
       } else {
         cartItem = await cartServices.createCartItem(cartId, productId, quantity)
       }

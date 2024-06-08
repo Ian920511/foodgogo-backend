@@ -101,7 +101,6 @@ model Review {
   user      User     @relation(fields: [buyerId], references: [id])
   buyerId   String
   comment   String
-  rating    Int
   response  ReviewResponse?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

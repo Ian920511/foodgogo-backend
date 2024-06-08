@@ -53,6 +53,10 @@ const orderController = {
       
       const cartItems = await cartServices.getCartItemsByCartId(cartId)
 
+      if (cartItems.length === 0) {
+        throw createError(400, '購物車中沒有商品，無法成立訂單')
+      }
+
       let totalPrice = 0
       const orderDetails = []
 
@@ -75,15 +79,15 @@ const orderController = {
 
         orderDetails.push(orderDetail)
       }
-
-      await orderServices.updateOrderTotalPrice(order.id, totalPrice)
+      
+      const updatedOrder = await orderServices.updateOrderTotalPrice(order.id, totalPrice)
       await cartServices.clearCartItems(cartId)
 
       res.json({
         status: 'success',
         message: '新增訂單成功',
         data: {
-          order,
+          order: updatedOrder,
           orderDetails
         }
       })

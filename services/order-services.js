@@ -119,7 +119,14 @@ const  orderServices = {
   updateOrderTotalPrice: async (orderId, totalPrice) => {
     const order = await prisma.order.update({
       where: { id: orderId },
-      data: { totalPrice }
+      data: { totalPrice },
+      select: {
+        id: true,
+        buyerId: true,
+        totalPrice: true,
+        createdAt: true,
+        updatedAt: true
+      }
     })
 
     return order
