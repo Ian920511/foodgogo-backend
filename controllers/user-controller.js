@@ -1,8 +1,7 @@
 const bcrypt = require('bcryptjs')
 const createError = require('http-errors')
 const jwt = require('jsonwebtoken')
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
+
 
 const userServices = require('./../services/user-services')
 const cartServices = require('./../services/cart-services')
@@ -111,21 +110,23 @@ const userController = {
   addFavorite: async (req, res, next) => {
     try {
       const { productId } = req.params
+      const userId = req.user.id
       
       const product = await productServices.getProductById(productId)
-
+      console.log('product', product)
+      console.log('productId', productId)
       if (!product){
         throw createError(404, '商品不存在')
       }
 
 
-      const favorite = await favoriteServices.getFavoriteByUserIdAndProductId(req.user.id, productId)
+      const favorite = await favoriteServices.getFavoriteByUserIdAndProductId(userId, productId)
       
       if (favorite) {
         throw createError(400, '你已經收藏這項商品')
       } 
 
-      const newFavorite = await favoriteServices.createFavorite(req.user.id, productId)
+      const newFavorite = await favoriteServices.createFavorite(userId, productId)
 
       res.json({
         status: 'success',

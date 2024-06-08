@@ -1,6 +1,3 @@
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
-
 const categoryServices = require('./../services/category-services')
 
 const categoryController = {

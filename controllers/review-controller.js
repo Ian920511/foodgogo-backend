@@ -1,6 +1,4 @@
 const createError = require('http-errors')
-const { PrismaClient } = require('@prisma/client')
-const prisma = new PrismaClient()
 
 const reviewServices = require('./../services/review-services')
 const userServices = require('./../services/user-services')
