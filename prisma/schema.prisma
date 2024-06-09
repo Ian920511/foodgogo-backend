@@ -35,6 +35,7 @@ model Product {
   price       Int
   active      Boolean    @default(true)
   stock       Int       @default(0)
+  version     Int       @default(0)
   category    Category   @relation(fields: [categoryId], references: [id])
   categoryId  String
   cartItem    CartItem[]
