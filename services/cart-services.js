@@ -83,7 +83,8 @@ const cartServices = {
             name: true,
             price: true,
             active: true,
-            stock: true
+            stock: true,
+            version: true
           }
         }
       }

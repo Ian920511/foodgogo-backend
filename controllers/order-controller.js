@@ -2,6 +2,7 @@ const createError = require('http-errors')
 
 const orderServices = require('./../services/order-services')
 const cartServices = require('./../services/cart-services')
+const productServices = require('./../services/product-services')
 
 const orderController = {
   getOrders : async (req, res, next) => {
@@ -69,6 +70,16 @@ const orderController = {
 
         if (!product.active) {
           throw createError(400, '商品目前未提供')
+        }
+
+        if (product.stock < cartItem.quantity) {
+          throw createError(400, '商品庫存不足')
+        }
+
+        const updateResult = await productServices.updateProductStock(product.id, product.stock - cartItem.quantity, product.version)
+
+        if (updateResult.count === 0) {
+          throw createError(400, '商品庫存更新失敗，請重視')
         }
 
         totalPrice += product.price * cartItem.quantity

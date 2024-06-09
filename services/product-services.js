@@ -164,6 +164,19 @@ const productServices = {
     return product
   },
 
+  updateProductStock: async (productId, newStock, version) => {
+    return await prisma.product.updateMany({
+      where: {
+        id: productId,
+        version: version 
+      },
+      data: {
+        stock: newStock,
+        version: { increment: 1 } 
+      }
+    })
+  },
+
   deleteProductById: async (productId) => {
     return await prisma.product.delete({ where: { id: productId } })
   }
