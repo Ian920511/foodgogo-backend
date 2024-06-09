@@ -22,10 +22,10 @@ const adminController = {
 
   createProduct: async (req, res, next) => {
     try {
-      const { name, description, price, categoryId } = req.body
+      const { name, description, price, categoryId, stock } = req.body
       const { file } = req
 
-      const product = await productServices.createProduct(name, description, file.path, price, categoryId)
+      const product = await productServices.createProduct(name, description, file.path, price, categoryId, stock)
 
       res.json({
         status: 'success',
@@ -46,7 +46,7 @@ const adminController = {
     try {
       const productId = req.params.productId
       const { file } = req
-      const { name, description, price, categoryId } = req.body
+      const { name, description, price, categoryId, stock } = req.body
       
       const product = await productServices.getProductById(productId)
    
@@ -54,7 +54,7 @@ const adminController = {
         throw createError(404, '該商品不存在')
       }
 
-      const updateProduct = await productServices.updateProduct(productId, name, description, file ? file.path : product.image, price, categoryId)
+      const updateProduct = await productServices.updateProduct(productId, name, description, file ? file.path : product.image, price, categoryId, stock)
 
       res.json({
         status: 'success',

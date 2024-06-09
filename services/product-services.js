@@ -35,6 +35,7 @@ const productServices = {
         image: true,
         price: true,
         active: true,
+        stock: true,
         category: {
           select: {
             id: true,
@@ -60,6 +61,7 @@ const productServices = {
         image: true,
         price: true,
         active: true,
+        stock: true,
         category: {
           select: {
             id: true,
@@ -81,6 +83,7 @@ const productServices = {
         image: true,
         price: true,
         active: true,
+        stock: true,
         category: {
           select: {
             id: true,
@@ -93,14 +96,15 @@ const productServices = {
     return products
   },
 
-  createProduct: async (name, description, imagePath, price, categoryId) => {
+  createProduct: async (name, description, imagePath, price, categoryId, stock) => {
     const product = await prisma.product.create({
       data: {
         name,
         description,
         image: imagePath,
         price: Number(price),
-        categoryId
+        categoryId,
+        stock: Number(stock)
       },
       select: {
         id: true,
@@ -108,6 +112,7 @@ const productServices = {
         description: true,
         image: true,
         price: true,
+        stock: true,
         category: {
           select: {
             id: true,
@@ -120,7 +125,7 @@ const productServices = {
     return product
   },
 
-  updateProduct: async (productId, name, description, imagePath, price, categoryId) => {
+  updateProduct: async (productId, name, description, imagePath, price, categoryId, stock) => {
     const product = await prisma.product.update({
       where: { id: productId },
       data: {
@@ -129,6 +134,7 @@ const productServices = {
         image: imagePath,
         price: Number(price),
         categoryId,
+        stock: Number(stock)
       },
       select: {
         id: true,
@@ -136,6 +142,7 @@ const productServices = {
         description: true,
         image: true,
         price: true,
+        stock: true,
         category: {
           select: {
             id: true,

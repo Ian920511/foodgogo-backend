@@ -18,6 +18,7 @@ const cartServices = {
                   price: true,
                   active: true,
                   image: true,
+                  stock: true
                 }
               }
             },
@@ -47,6 +48,7 @@ const cartServices = {
                 price: true,
                 active: true,
                 image: true,
+                stock: true
               }
             }
           },
@@ -80,7 +82,8 @@ const cartServices = {
             id: true,
             name: true,
             price: true,
-            active: true
+            active: true,
+            stock: true
           }
         }
       }
@@ -107,7 +110,8 @@ const cartServices = {
             id: true,
             name: true,
             price: true,
-            active: true
+            active: true,
+            stock: true
           }
         }
       }
@@ -130,7 +134,8 @@ const cartServices = {
             id: true,
             name: true,
             price: true,
-            active: true
+            active: true,
+            stock: true
           }
         }
       }

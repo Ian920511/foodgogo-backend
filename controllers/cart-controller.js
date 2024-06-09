@@ -36,7 +36,14 @@ const cartController = {
         return createError(400, '商品目前未提供')
       }
 
+      if (product.stock < quantity) {
+        throw createError(400, '商品库存不足')
+      }
+
       if (cartItem) {
+        if (product.stock < cartItem.quantity + quantity) {
+          throw createError(400, '商品库存不足')
+        }
         cartItem = await cartServices.updateCartItem(cartItem.id, quantity, true)
       } else {
         cartItem = await cartServices.createCartItem(cartId, productId, quantity)
