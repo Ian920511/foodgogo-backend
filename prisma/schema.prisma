@@ -21,10 +21,11 @@ model User {
   cart        Cart[]
   review      Review[]
   favorite    Favorite[]
-  reservation Reservation[]
   order       Order[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([email])
 }
 
 model Product {
@@ -44,6 +45,9 @@ model Product {
   orderDetail OrderDetail[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+
+  @@index([name])
+  @@index([price])
 }
 
 model Category {
@@ -61,6 +65,8 @@ model Cart {
   cartItem  CartItem[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
+
+  @@index([buyerId])
 }
 
 model CartItem {
@@ -72,6 +78,8 @@ model CartItem {
   cartId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([cartId, productId])
 }
 
 model Order {
@@ -82,6 +90,8 @@ model Order {
   orderDetail OrderDetail[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+
+  @@index([buyerId])
 }
 
 model OrderDetail {
@@ -103,7 +113,6 @@ model Review {
   user      User     @relation(fields: [buyerId], references: [id])
   buyerId   String
   comment   String
-  response  ReviewResponse?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -116,4 +125,6 @@ model Favorite {
   buyerId   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([buyerId, productId])
 }
