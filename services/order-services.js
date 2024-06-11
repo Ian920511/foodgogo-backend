@@ -81,6 +81,9 @@ const  orderServices = {
             }
           }
         }
+      },
+      orderBy: {
+        createdAt: 'desc'
       }
     })
 
