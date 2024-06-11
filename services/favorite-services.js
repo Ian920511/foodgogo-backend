@@ -3,10 +3,13 @@ const prisma = new PrismaClient()
 
 const favoriteServices = {
   getFavoritesByUserId: async (userId) => {
-    const favorite = await prisma.favorite.findFirst({
-      where: { buyerId: userId }
+    const favorite = await prisma.favorite.findMany({
+      where: { buyerId: userId },
+      select: {
+        product: true
+      }
     })
-
+    
     return favorite
   },
 
