@@ -5,6 +5,7 @@
     "image": "https://imgur.com/aWaA2bX.jpg",
     "category": "飲料",
     "price": 50,
+    "stock": 10,
     "active": true
   },
   {
@@ -13,6 +14,7 @@
     "image": "https://imgur.com/R9HBMbn.jpg",
     "category": "飲料",
     "price": 100,
+    "stock": 10,
     "active": true
   },
   {
@@ -21,6 +23,7 @@
     "image": "https://imgur.com/lWeJgTQ.jpg",
     "category": "美式",
     "price": 500,
+    "stock": 10,
     "active": true
   },
   {
@@ -29,6 +32,7 @@
     "image": "https://imgur.com/ujJMUxg.jpg",
     "category": "美式",
     "price": 300,
+    "stock": 10,
     "active": true
   },
   {
@@ -37,6 +41,7 @@
     "image": "https://imgur.com/8JigivR.jpg",
     "category": "中式",
     "price": 180,
+    "stock": 10,
     "active": true
   },
   {
@@ -45,6 +50,7 @@
     "image": "https://imgur.com/4273VwP.jpg",
     "category": "中式",
     "price": 280,
+    "stock": 10,
     "active": true
   },
   {
@@ -53,6 +59,7 @@
     "image": "https://imgur.com/ZVY3A93.jpg",
     "category": "日式",
     "price": 200,
+    "stock": 10,
     "active": true
   },
   {
@@ -61,6 +68,7 @@
     "image": "https://imgur.com/6wBifme.jpg",
     "category": "日式",
     "price": 250,
+    "stock": 10,
     "active": true
   }
 ]

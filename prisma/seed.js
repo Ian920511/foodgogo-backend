@@ -47,8 +47,20 @@ async function main () {
       }
     })
 
+    const user2 = await tx.user.create({
+      data: {
+        username: "user2",
+        email: "user2@gmail.com",
+        password: bcrypt.hashSync('123456', 10),
+        address: "台北",
+        tel: "09123456789",
+        isAdmin: false,
+      }
+    })
+
     await tx.cart.create({ data: { buyerId: admin.id } })
     await tx.cart.create({ data: { buyerId: user1.id } })
+    await tx.cart.create({ data: { buyerId: user2.id } })
 
   })
 }

@@ -79,7 +79,7 @@ const orderController = {
         const updateResult = await productServices.updateProductStock(product.id, product.stock - cartItem.quantity, product.version)
 
         if (updateResult.count === 0) {
-          throw createError(400, '商品庫存更新失敗，請重視')
+          throw createError(400, '商品庫存更新失敗，請重試')
         }
 
         totalPrice += product.price * cartItem.quantity
