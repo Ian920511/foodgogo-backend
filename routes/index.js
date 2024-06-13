@@ -6,6 +6,7 @@ const { authValidation } = require('../middleware/validation')
 const userController = require('../controllers/user-controller')
 const categoryController = require('../controllers/category-controller')
 const reviewController = require('./../controllers/review-controller')
+const orderController = require('./../controllers/order-controller')
 const carts = require('./modules/carts')
 const products = require('./modules/products')
 const orders = require('./modules/orders')
@@ -23,6 +24,8 @@ router.post('/reviews', authenticated, reviewController.postReview)
 router.delete('/reviews/:reviewId', authenticated, authenticatedAdmin, reviewController.deleteReview)
 
 router.get('/categories', categoryController.getCategories)
+
+router.get('/line-pay/confirm', orderController.confirmLinePayPaymentHandler)
 
 router.use('/admin', authenticated ,authenticatedAdmin, admin)
 router.use('/carts', authenticated, carts)

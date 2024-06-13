@@ -3,6 +3,7 @@ const createError = require('http-errors')
 const orderServices = require('./../services/order-services')
 const cartServices = require('./../services/cart-services')
 const productServices = require('./../services/product-services')
+const linePayService = require('./../services/linepay-services')
 
 const orderController = {
   getOrders : async (req, res, next) => {
@@ -60,7 +61,7 @@ const orderController = {
       const orderDetails = []
 
       const order = await orderServices.createOrder(userId, totalPrice)
-
+      
       for (const cartItem of cartItems) {
         const product = cartItem.product
 
@@ -92,12 +93,19 @@ const orderController = {
       const updatedOrder = await orderServices.updateOrderTotalPrice(order.id, totalPrice)
       await cartServices.clearCartItems(cartId)
 
+      const linePayResponse = await linePayService.createLinePayRequest(order.id, cartItems, totalPrice)
+      console.log(linePayResponse)
+      if (linePayResponse?.returnCode !== '0000') {
+        throw createError(500, 'LinePay 付款失敗')
+      }
+
       res.json({
         status: 'success',
-        message: '新增訂單成功',
+        message: '新增訂單成功，請前往line pay頁面完成付款',
         data: {
           order: updatedOrder,
-          orderDetails
+          orderDetails,
+          paymentUrl: linePayResponse.info.paymentUrl.web
         }
       })
 
@@ -106,6 +114,35 @@ const orderController = {
       next(error)
     }
   },
+
+  confirmLinePayPaymentHandler: async (req, res, next) => {
+    try {
+      const { orderId, transactionId } = req.query
+      const order = await orderServices.getOrderById(orderId)
+
+      if (!order) {
+        throw createError(404, '訂單不存在')
+      }
+
+      const paymentResult = await linePayService.confirmLinePayPayment(transactionId, order.totalPrice)
+      console.log(paymentResult)
+      if (paymentResult.returnCode !== '0000') {
+        throw createError(500, '付款失敗')
+      }
+
+      res.json({
+        status: 'success',
+        message: '付款成功',
+        data: {
+          order
+        }
+      })
+
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
+  }
 }
 
 module.exports = orderController
