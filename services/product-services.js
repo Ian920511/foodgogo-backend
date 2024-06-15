@@ -62,6 +62,7 @@ const productServices = {
         price: true,
         active: true,
         stock: true,
+        version: true,
         category: {
           select: {
             id: true,
@@ -177,13 +178,15 @@ const productServices = {
     })
     
     if (product.count > 0 && newStock === 0) {
-      await prisma.product.update({
+      await tx.product.update({
         where: { id: productId },
         data: { active: false }
       });
     }
 
-  return product
+    const updatedProduct = await prisma.product.findUnique({ where: { id: productId } })
+
+    return updatedProduct
   },
 
   deleteProductById: async (productId) => {

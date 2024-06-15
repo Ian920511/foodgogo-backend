@@ -94,8 +94,9 @@ const orderController = {
       await cartServices.clearCartItems(cartId)
 
       const linePayResponse = await linePayService.createLinePayRequest(order.id, cartItems, totalPrice)
-      console.log(linePayResponse)
+      
       if (linePayResponse?.returnCode !== '0000') {
+        await orderServices.updateOrderStatus(order.id, 'CANCELLED')
         throw createError(500, 'LinePay 付款失敗')
       }
 
@@ -119,17 +120,20 @@ const orderController = {
     try {
       const { orderId, transactionId } = req.query
       const order = await orderServices.getOrderById(orderId)
-
+      
       if (!order) {
         throw createError(404, '訂單不存在')
       }
 
       const paymentResult = await linePayService.confirmLinePayPayment(transactionId, order.totalPrice)
-      console.log(paymentResult)
+      
       if (paymentResult.returnCode !== '0000') {
+        await orderServices.updateOrderStatus(orderId, 'CANCELLED')
         throw createError(500, '付款失敗')
       }
-
+  
+      await orderServices.updateOrderStatus(orderId, 'PAID')
+      
       res.json({
         status: 'success',
         message: '付款成功',

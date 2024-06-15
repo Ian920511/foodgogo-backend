@@ -136,6 +136,34 @@ const  orderServices = {
     })
 
     return order
+  },
+
+  updateOrderStatus: async (orderId, status) => {
+    const order =  prisma.order.update({
+      where: { id: orderId },
+      data: { status }
+    })
+
+    return order
+  },
+
+  getExpiredPendingOrders: () => {
+    const expirationTime = new Date(Date.now() - 30 * 60 * 1000) 
+    const unpaidOrder =  prisma.order.findMany({
+      where: {
+        status: 'PENDING',
+        createdAt: { lt: expirationTime }
+      },
+      include: {
+        orderDetail: {
+          include: {
+            product: true
+          }
+        }
+      }
+    })
+
+    return unpaidOrder
   }
 
 }
