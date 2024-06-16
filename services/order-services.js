@@ -8,6 +8,7 @@ const  orderServices = {
       select: {
         id: true,
         totalPrice: true,
+        status: true,
         createdAt: true,
         orderDetail: {
           select: {
@@ -36,6 +37,7 @@ const  orderServices = {
       select: {
         id: true,
         totalPrice: true,
+        status: true,
         orderDetail: {
           select: {
             id: true,
@@ -59,6 +61,7 @@ const  orderServices = {
       select: {
         id: true,
         createdAt: true,
+        status: true,
         totalPrice: true,
         user: {
           select: {
@@ -130,6 +133,7 @@ const  orderServices = {
         id: true,
         buyerId: true,
         totalPrice: true,
+        status: true,
         createdAt: true,
         updatedAt: true
       }

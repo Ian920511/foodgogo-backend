@@ -7,6 +7,7 @@ const userController = require('../controllers/user-controller')
 const categoryController = require('../controllers/category-controller')
 const reviewController = require('./../controllers/review-controller')
 const orderController = require('./../controllers/order-controller')
+const linePayController = require('./../controllers/linePay-controller')
 const carts = require('./modules/carts')
 const products = require('./modules/products')
 const orders = require('./modules/orders')
@@ -26,6 +27,7 @@ router.delete('/reviews/:reviewId', authenticated, authenticatedAdmin, reviewCon
 router.get('/categories', categoryController.getCategories)
 
 router.get('/line-pay/confirm', orderController.confirmLinePayPaymentHandler)
+router.post('/line-pay/handle', linePayController.handleLinePay)
 
 router.use('/admin', authenticated ,authenticatedAdmin, admin)
 router.use('/carts', authenticated, carts)

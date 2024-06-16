@@ -4,6 +4,7 @@ const orderServices = require('./../services/order-services')
 const cartServices = require('./../services/cart-services')
 const productServices = require('./../services/product-services')
 const linePayService = require('./../services/linepay-services')
+const paymentService = require('../services/paymentService')
 
 const orderController = {
   getOrders : async (req, res, next) => {
@@ -119,18 +120,8 @@ const orderController = {
   confirmLinePayPaymentHandler: async (req, res, next) => {
     try {
       const { orderId, transactionId } = req.query
-      const order = await orderServices.getOrderById(orderId)
       
-      if (!order) {
-        throw createError(404, '訂單不存在')
-      }
-
-      const paymentResult = await linePayService.confirmLinePayPayment(transactionId, order.totalPrice)
-      
-      if (paymentResult.returnCode !== '0000') {
-        await orderServices.updateOrderStatus(orderId, 'CANCELLED')
-        throw createError(500, '付款失敗')
-      }
+      const newOrder = await paymentService.confirmPayment(transactionId, orderId)
   
       await orderServices.updateOrderStatus(orderId, 'PAID')
       
@@ -138,7 +129,7 @@ const orderController = {
         status: 'success',
         message: '付款成功',
         data: {
-          order
+          newOrder
         }
       })
 

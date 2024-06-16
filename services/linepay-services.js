@@ -1,6 +1,8 @@
 const axios = require('axios')
 const crypto = require('crypto-js')
 
+const linePayConfig = require('./../config/linePayConfig')
+
 const createSignature = (uri, payload, nonce) => {
   const channelSecret = process.env.LINE_PAY_CHANNEL_SECRET
   const json = JSON.stringify(payload)
@@ -29,8 +31,8 @@ const linePayService = {
         }
       ],
       redirectUrls: {
-        confirmUrl: process.env.LINE_PAY_CONFIRM_URL,
-        cancelUrl: process.env.LINE_PAY_CANCEL_URL
+        confirmUrl: linePayConfig.LINE_PAY_CONFIRM_URL,
+        cancelUrl: linePayConfig.LINE_PAY_CANCEL_URL
       }
     }
     
@@ -38,12 +40,12 @@ const linePayService = {
     const nonce = parseInt(new Date().getTime() / 1000)
     const signature = createSignature(uri, payload, nonce)
 
-    const response = await axios.post(`${process.env.LINE_PAY_BASE_URL}/v3/payments/request`,
+    const response = await axios.post(`${linePayConfig.LINE_PAY_BASE_URL}/v3/payments/request`,
     payload,
     {
       headers: {
         'Content-Type': 'application/json',
-        'X-LINE-ChannelId': process.env.LINE_PAY_CHANNEL_ID,
+        'X-LINE-ChannelId': linePayConfig.LINE_PAY_CHANNEL_ID,
         'X-LINE-Authorization-Nonce': nonce,
         'X-LINE-Authorization': signature
       }
@@ -63,11 +65,11 @@ const linePayService = {
     const nonce = parseInt(new Date().getTime() / 1000)
     const signature = createSignature(uri, payload, nonce)
 
-    const response = await axios.post(`${process.env.LINE_PAY_BASE_URL}/v3/payments/${transactionId}/confirm`,
+    const response = await axios.post(`${linePayConfig.LINE_PAY_BASE_URL}/v3/payments/${transactionId}/confirm`,
     payload, {
       headers: {
         'Content-Type': 'application/json',
-        'X-LINE-ChannelId': process.env.LINE_PAY_CHANNEL_ID,
+        'X-LINE-ChannelId': linePayConfig.LINE_PAY_CHANNEL_ID,
         'X-LINE-Authorization-Nonce': nonce,
         'X-LINE-Authorization': signature
       }
