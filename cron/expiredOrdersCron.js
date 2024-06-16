@@ -21,9 +21,10 @@ cron.schedule('*/10 * * * *', async () => {
 
         const newStock = product.stock + detail.quantity  
         const version = product.version
-        console.log(product.id, newStock, version)
         const updateResult = await productServices.updateProductStock(product.id, newStock, version)
-        console.log(updateResult)
+        
+        console.lof(`此${order.id} 訂單更新完成`)
+
         if (updateResult.count === 0) {
           console.error(`物品更新失敗`)
         }

@@ -29,6 +29,7 @@ async function main () {
         description: product.description,
         image: product.image,
         price: product.price,
+        stock: product.stock,
         active: product.active,
         categoryId: categories.find(
           (category) => category.name === product.category

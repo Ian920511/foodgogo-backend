@@ -113,8 +113,7 @@ const userController = {
       const userId = req.user.id
       
       const product = await productServices.getProductById(productId)
-      console.log('product', product)
-      console.log('productId', productId)
+      
       if (!product){
         throw createError(404, '商品不存在')
       }

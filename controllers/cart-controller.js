@@ -7,7 +7,7 @@ const cartController = {
   getCartItems : async (req, res, next) => {
     try {
       const buyerId = req.user.id
-      console.log(buyerId)
+      
       const cart = await cartServices.getCartByUserId(buyerId)
 
       res.json({
